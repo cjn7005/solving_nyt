@@ -7,6 +7,7 @@ import java.util.Set;
 
 import src.util.Edge;
 import src.util.Node;
+import src.util.WordChecker;
 
 public class FinderThread extends Thread {
     private final Node<String> node;
@@ -29,7 +30,9 @@ public class FinderThread extends Thread {
         path.add(node);
         builder.append(node.getValue());
         String word = builder.toString();
-        if (depth >= Strands.MIN_WORD_LENGTH-1 && !result.getWords().contains(word) && Strands.checkWord(builder.toString())) {
+        if (depth >= Strands.MIN_WORD_LENGTH-1 && 
+            !result.getWords().contains(word) && 
+            WordChecker.checkWord(builder.toString())) {
             result.addWord(word);
             result.addPath(new LinkedList<>(path));
         }

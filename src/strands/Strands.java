@@ -1,7 +1,5 @@
 package src.strands;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,40 +9,52 @@ import java.util.Set;
 import src.util.Edge;
 import src.util.Node;
 
+/**
+ * This class uses a multi-threaded DFS algorithm to search 
+ * for valid English words in the New York Times game Strands.
+ */
 public class Strands {
-    private static Set<String> WORDS = new HashSet<>();
+    /** The minimum word length to search for (inclusive). 
+     * For Strands this value is 4 */
     public static final int MIN_WORD_LENGTH = 4;
+    /** The maximum word length to search for (inclusive). 
+     * Note that this will have a significant impact on performance with diminishing returns */
     public static final int MAX_WORD_LENGTH = 10;
+    /** The grid length */
     private static final int GRAPH_ROWS = 8;
+    /** The grid width */
     private static final int GRAPH_COLS = 6;
+    /** The total number of letters in the grid */
     private static final int GRAPH_SIZE = GRAPH_ROWS * GRAPH_COLS;
 
+    /** The list of nodes present in the grid.
+     * (Must first cast to a Node<String>) */
     private Object[] nodes;
+    /** The number of nodes in the grid. May or may not align with nodes.length */
     private int nodeSize;
 
-    static {
-        File file = new File("src/util/words.txt");
-        Scanner scanner;
-        try {
-            scanner = new Scanner(file);
-            while ((scanner.hasNextLine())) {
-                WORDS.add(scanner.nextLine().toLowerCase());
-            }
-            scanner.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
+    /** 
+     * Returns the nodes present in the grid
+     * 
+     * @return the nodes present in the grid
+     */
     public Object[] getNodes() {
         return this.nodes;
     }
-
+    
+    /**
+     * Create a new default Strands object
+     */
     public Strands() {
         this.nodes = new Object[GRAPH_SIZE];
         this.nodeSize = 0;
     }
-
+    
+    /**
+     * Adds a new node to the grid
+     * 
+     * @param node the node to add
+     */
     public void addNode(Node<String> node) {
         if (nodeSize >= nodes.length) {
             nodes = resize(nodes);
@@ -53,6 +63,11 @@ public class Strands {
         nodeSize++;
     }
 
+    /**
+     * Removes a node from the grid
+     * 
+     * @param node the node to remove
+     */
     public void removeNode(Node<String> node) {
         int idx = findNode(node);
         nodes[idx] = null;
@@ -62,10 +77,13 @@ public class Strands {
         nodeSize--;
     }
 
-    public static boolean checkWord(String word) {
-        return WORDS.contains(word.toLowerCase());
-    }
-
+    /**
+     * Performs a linear search to find the index of a node.
+     * Currently only used by {@link src.strands.Strands#removeNode}
+     * 
+     * @param node the node to search for
+     * @return the index of the node in {@code nodes}
+     */
     private int findNode(Node<String> node) {
         for (int i = 0; i < nodes.length; i++) {
             if (nodes[i].equals(node)) {
@@ -75,6 +93,12 @@ public class Strands {
         return -1;
     }
 
+    /**
+     * Doubles the size of {@code arr} and returns the result
+     * 
+     * @param arr the array to resize
+     * @return the resized array
+     */
     private static Object[] resize(Object[] arr) {
         Object[] newArray = new Object[arr.length*2];
         for (int i = 0; i < arr.length; i++) {
@@ -83,6 +107,11 @@ public class Strands {
         return newArray;
     }
 
+    /**
+     * Build the Strands grid from the inputted character array row by row
+     * 
+     * @param arr the Strands character array
+    */
     @SuppressWarnings("unchecked")
     public void buildStrands(char[] arr) {
         Object[] nodes = new Object[arr.length];
@@ -114,8 +143,15 @@ public class Strands {
         this.nodes = nodes;
     }
 
+    /**
+     * Finds all of the valid words and their respective paths 
+     * within the Strands grid
+     * 
+     * @return the results of the search
+     * @throws InterruptedException
+    */
     @SuppressWarnings("unchecked")
-    private StrandsResults findAll() throws InterruptedException {
+    public StrandsResults findAll() throws InterruptedException {
         Set<String> words = new HashSet<>();
         Set<List<Node<String>>> paths = new HashSet<>();
         StrandsResults result = new StrandsResults(words, paths);
@@ -136,6 +172,14 @@ public class Strands {
         return result;
     }
 
+    /**
+     * Pretty-print function that prints the Strands grid for each
+     * valid English word found in {@code paths}. The letters used to 
+     * create the word are capitalized.
+     * 
+     * @param paths the paths identified by {@link src.strands.Strands#findAll}
+     * @return the pretty-print string
+    */
     @SuppressWarnings("unchecked")
     public List<String> pathsToStr(Set<List<Node<String>>> paths) {
         StringBuilder builder = new StringBuilder();
@@ -184,6 +228,28 @@ public class Strands {
         return builder.toString();
     }
 
+    /**
+     * Prompts the user for a Strands grid and finds all the valid words.
+     * 
+     * The Strands grid should be inputted as a single string of characters
+     * with no spaces, as read from top left to bottom right.
+     * 
+     * e.g. the grid: <br>
+     * c r u n i a <br>
+     * i s b o c s <br>
+     * s e a f t o <br>
+     * t d e p h r <br>
+     * r i a m e p <br>
+     * r o n i o m <br>
+     * d i n l c m <br>
+     * y r a l n o <br>
+     * 
+     * should be inputted as: <br>
+     * cruniaisbocsseaftotdephrriameproniomdinlcmyralno
+     * 
+     * @param args
+     * @throws InterruptedException
+     */
     public static void main(String[] args) throws InterruptedException {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter letters from top left to bottom right: ");
@@ -196,19 +262,15 @@ public class Strands {
         } while (arr.length != GRAPH_SIZE);
         scanner.close();
 
-        Strands graph = new Strands();
-        graph.buildStrands(arr);
-        System.out.println(graph);
+        Strands strands = new Strands();
+        strands.buildStrands(arr);
+        System.out.println(strands);
 
-        StrandsResults results = graph.findAll();
-        // for (String word : words) { 
-        //     System.out.println(word);
-        // }
+        StrandsResults results = strands.findAll();
         Set<String> words = results.getWords();
         Set<List<Node<String>>> paths = results.getPaths();
 
-        List<String> pathStrs = graph.pathsToStr(paths);
-
+        List<String> pathStrs = strands.pathsToStr(paths);
         for (String str : pathStrs) {
             System.out.println(str);
         }
