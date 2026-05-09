@@ -18,7 +18,6 @@ public class FinderThread extends Thread {
         this.result = result;
     }
 
-
     @SuppressWarnings("unchecked")
     public StrandsResults dfs(Node<String> node, int depth, 
                               StringBuilder builder, StrandsResults result,

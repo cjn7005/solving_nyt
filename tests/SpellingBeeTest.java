@@ -12,13 +12,21 @@ import org.junit.jupiter.api.Assumptions;
 import src.spellingbee.SpellingBee;
 
 public class SpellingBeeTest {
-    private static final int[][] knownWordSizes = new int[10+1][10+1];
+    /** 
+     * A look up table for the known number of words that are
+     * valid for the Spelling Bee from 05/08/2026.
+     * The first index is the minimum word length and
+     * the second index is the maximum word length
+     */
+    private static final int[][] knownWordSizes = new int[11+1][11+1];
     private static final char[] bee_05_08_2026 = {'c','g','i','l','o','a','y'};
 
     @BeforeClass
     public static void listKnownValues() {
         knownWordSizes[4][8] = 205;
+        knownWordSizes[4][9] = 218;
         knownWordSizes[4][10] = 222;
+        knownWordSizes[4][11] = 230;
     }
 
     @Test
