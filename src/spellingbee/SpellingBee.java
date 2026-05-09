@@ -3,8 +3,6 @@ package src.spellingbee;
 import java.util.LinkedList;
 import java.util.List;
 
-import src.util.WordChecker;
-
 public class SpellingBee {
     public static final int MIN_WORD_LENGTH = 4;
     public static final int MAX_WORD_LENGTH = 8;
@@ -17,44 +15,53 @@ public class SpellingBee {
         this.mainChar = mainChar;
     }
 
-    public List<String> findAll() {
-        int nPermutes = (int) Math.pow(letters.length,MAX_WORD_LENGTH);
-        assert nPermutes >= 0 && nPermutes <= 282475249 : "let's not"; // 7^10=that
+    public SpellingBee(char[] letters) {
+        this(letters, letters[0]);
+    }
+
+    public List<String> findAll() throws InterruptedException {
         List<String> result = new LinkedList<>();
 
+        Thread[] threads = new Thread[MAX_WORD_LENGTH-MIN_WORD_LENGTH+1];
         for (int i = MIN_WORD_LENGTH; i <= MAX_WORD_LENGTH; i++) {
-            permute(result, new char[i], 0, i);
+            threads[i-MIN_WORD_LENGTH] = new PermuteThread(result, letters, mainChar, i);
+            threads[i-MIN_WORD_LENGTH].start();
+        }
+        for (Thread thread : threads) {
+            thread.join();
         }
 
         return result;
     }
-
-    private void permute(List<String> result, char[] current, int i, int len) {
-        if (i >= len) {
-            String word = String.valueOf(current.clone());
-            if (WordChecker.checkWord(word)) {
-                for (int j = 0; j < current.length; j++) {
-                    if (current[j] == mainChar) {
-                        result.add(word);
-                        return;
-                    }
+    
+    public boolean checkPangram(String str) {
+        boolean[] checkPangram = new boolean[letters.length];
+        for (char c : str.toCharArray()) {
+            for (int i = 0; i < letters.length; i++) {
+                if (!checkPangram[i] && c == letters[i]) {
+                    checkPangram[i] = true;
                 }
             }
-            return;
         }
-        for (char c : letters) {
-            current[i] = c;
-            permute(result, current, i+1, len);
+        boolean isPangram = true;
+        for (int i = 0; i < checkPangram.length; i++) {
+            if (!checkPangram[i]) {
+                isPangram = false;
+                break;
+            }
         }
+        return isPangram;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         char[] chars = {'c','g','i','l','o','a','y'};
-        char mainChar = 'c';
 
-        SpellingBee bee = new SpellingBee(chars, mainChar);
+        SpellingBee bee = new SpellingBee(chars);
         List<String> words = bee.findAll();
         for (String str : words) {
+            if (bee.checkPangram(str)) {
+                System.out.print("PANGRAM: ");
+            }
             System.out.println(str);
         }
         System.out.println("Found " + words.size() + " words.");
