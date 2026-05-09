@@ -1,4 +1,5 @@
-Enter letters from top left to bottom right: c r u n i a 
+Enter letters from top left to bottom right: 
+c r u n i a 
 i s b o c s 
 s e a f t o 
 t d e p h r 
