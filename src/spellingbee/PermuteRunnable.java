@@ -65,7 +65,9 @@ public class PermuteRunnable implements Runnable {
         }
     }
 
-    /** Initializes {@code permute} */
+    /** Initializes {@link src.spellingbee.PermuteRunnable#permute} 
+     * @see Runnable#run
+    */
     @Override
     public void run() {
         permute(result, current, 1, len);

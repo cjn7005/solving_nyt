@@ -10,6 +10,9 @@ import org.junit.jupiter.api.Assumptions;
 import src.strands.Strands;
 import src.strands.StrandsResults;
 
+/**
+ * These are characterization tests (since manually checking for correctness seems infeasable)
+ */
 public class StrandsTest {
     /** 
      * A look up table for the known number of words that are
@@ -22,6 +25,8 @@ public class StrandsTest {
 
     @BeforeClass
     public static void listKnownValues() {
+        knownWordSizes[4][8] = 1903;
+        knownWordSizes[4][9] = 1923;
         knownWordSizes[4][10] = 1927;
     }
 

@@ -19,7 +19,7 @@ public class Strands {
     public static final int MIN_WORD_LENGTH = 4;
     /** The maximum word length to search for (inclusive). 
      * Note that this will have a significant impact on performance with diminishing returns */
-    public static final int MAX_WORD_LENGTH = 10;
+    public static final int MAX_WORD_LENGTH = 8;
     /** The grid length */
     private static final int GRAPH_ROWS = 8;
     /** The grid width */

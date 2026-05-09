@@ -11,6 +11,9 @@ import org.junit.jupiter.api.Assumptions;
 
 import src.spellingbee.SpellingBee;
 
+/**
+ * These are characterization tests (since manually checking for correctness seems infeasable)
+ */
 public class SpellingBeeTest {
     /** 
      * A look up table for the known number of words that are

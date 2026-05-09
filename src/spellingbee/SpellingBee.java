@@ -13,7 +13,7 @@ public class SpellingBee {
     public static final int MIN_WORD_LENGTH = 4;
     /** The maximum word length. Note that this has a significant impact
      * on performance with diminishing returns */
-    public static final int MAX_WORD_LENGTH = 8;
+    public static final int MAX_WORD_LENGTH = 10;
 
     /** The array of allowed letters */
     private final char[] letters;
@@ -117,7 +117,7 @@ public class SpellingBee {
     public static void main(String[] args) throws InterruptedException {
         Scanner scanner = new Scanner(System.in);
         System.out.print(
-            "Enter the list of letters with the center as the first (no spaces) :"
+            "Enter the list of letters with the center as the first (no spaces): "
         );
         char[] chars = scanner.next().toCharArray();
         scanner.close();
